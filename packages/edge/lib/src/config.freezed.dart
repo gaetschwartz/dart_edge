@@ -203,6 +203,7 @@ mixin _$SupabaseConfig {
   CompilerLevel? get devCompilerLevel => throw _privateConstructorUsedError;
   CompilerLevel? get prodCompilerLevel => throw _privateConstructorUsedError;
   bool? get exitWatchOnFailure => throw _privateConstructorUsedError;
+  bool? get useIsolates => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -221,7 +222,8 @@ abstract class $SupabaseConfigCopyWith<$Res> {
       Map<String, String> functions,
       CompilerLevel? devCompilerLevel,
       CompilerLevel? prodCompilerLevel,
-      bool? exitWatchOnFailure});
+      bool? exitWatchOnFailure,
+      bool? useIsolates});
 }
 
 /// @nodoc
@@ -242,6 +244,7 @@ class _$SupabaseConfigCopyWithImpl<$Res, $Val extends SupabaseConfig>
     Object? devCompilerLevel = freezed,
     Object? prodCompilerLevel = freezed,
     Object? exitWatchOnFailure = freezed,
+    Object? useIsolates = freezed,
   }) {
     return _then(_value.copyWith(
       projectPath: null == projectPath
@@ -264,6 +267,10 @@ class _$SupabaseConfigCopyWithImpl<$Res, $Val extends SupabaseConfig>
           ? _value.exitWatchOnFailure
           : exitWatchOnFailure // ignore: cast_nullable_to_non_nullable
               as bool?,
+      useIsolates: freezed == useIsolates
+          ? _value.useIsolates
+          : useIsolates // ignore: cast_nullable_to_non_nullable
+              as bool?,
     ) as $Val);
   }
 }
@@ -281,7 +288,8 @@ abstract class _$$_SupabaseConfigCopyWith<$Res>
       Map<String, String> functions,
       CompilerLevel? devCompilerLevel,
       CompilerLevel? prodCompilerLevel,
-      bool? exitWatchOnFailure});
+      bool? exitWatchOnFailure,
+      bool? useIsolates});
 }
 
 /// @nodoc
@@ -300,6 +308,7 @@ class __$$_SupabaseConfigCopyWithImpl<$Res>
     Object? devCompilerLevel = freezed,
     Object? prodCompilerLevel = freezed,
     Object? exitWatchOnFailure = freezed,
+    Object? useIsolates = freezed,
   }) {
     return _then(_$_SupabaseConfig(
       projectPath: null == projectPath
@@ -322,6 +331,10 @@ class __$$_SupabaseConfigCopyWithImpl<$Res>
           ? _value.exitWatchOnFailure
           : exitWatchOnFailure // ignore: cast_nullable_to_non_nullable
               as bool?,
+      useIsolates: freezed == useIsolates
+          ? _value.useIsolates
+          : useIsolates // ignore: cast_nullable_to_non_nullable
+              as bool?,
     ));
   }
 }
@@ -336,7 +349,8 @@ class _$_SupabaseConfig implements _SupabaseConfig {
       },
       this.devCompilerLevel,
       this.prodCompilerLevel,
-      this.exitWatchOnFailure})
+      this.exitWatchOnFailure,
+      this.useIsolates})
       : _functions = functions;
 
   factory _$_SupabaseConfig.fromJson(Map<String, dynamic> json) =>
@@ -360,10 +374,12 @@ class _$_SupabaseConfig implements _SupabaseConfig {
   final CompilerLevel? prodCompilerLevel;
   @override
   final bool? exitWatchOnFailure;
+  @override
+  final bool? useIsolates;
 
   @override
   String toString() {
-    return 'SupabaseConfig(projectPath: $projectPath, functions: $functions, devCompilerLevel: $devCompilerLevel, prodCompilerLevel: $prodCompilerLevel, exitWatchOnFailure: $exitWatchOnFailure)';
+    return 'SupabaseConfig(projectPath: $projectPath, functions: $functions, devCompilerLevel: $devCompilerLevel, prodCompilerLevel: $prodCompilerLevel, exitWatchOnFailure: $exitWatchOnFailure, useIsolates: $useIsolates)';
   }
 
   @override
@@ -380,7 +396,9 @@ class _$_SupabaseConfig implements _SupabaseConfig {
             (identical(other.prodCompilerLevel, prodCompilerLevel) ||
                 other.prodCompilerLevel == prodCompilerLevel) &&
             (identical(other.exitWatchOnFailure, exitWatchOnFailure) ||
-                other.exitWatchOnFailure == exitWatchOnFailure));
+                other.exitWatchOnFailure == exitWatchOnFailure) &&
+            (identical(other.useIsolates, useIsolates) ||
+                other.useIsolates == useIsolates));
   }
 
   @JsonKey(ignore: true)
@@ -391,7 +409,8 @@ class _$_SupabaseConfig implements _SupabaseConfig {
       const DeepCollectionEquality().hash(_functions),
       devCompilerLevel,
       prodCompilerLevel,
-      exitWatchOnFailure);
+      exitWatchOnFailure,
+      useIsolates);
 
   @JsonKey(ignore: true)
   @override
@@ -413,7 +432,8 @@ abstract class _SupabaseConfig implements SupabaseConfig {
       final Map<String, String> functions,
       final CompilerLevel? devCompilerLevel,
       final CompilerLevel? prodCompilerLevel,
-      final bool? exitWatchOnFailure}) = _$_SupabaseConfig;
+      final bool? exitWatchOnFailure,
+      final bool? useIsolates}) = _$_SupabaseConfig;
 
   factory _SupabaseConfig.fromJson(Map<String, dynamic> json) =
       _$_SupabaseConfig.fromJson;
@@ -429,6 +449,8 @@ abstract class _SupabaseConfig implements SupabaseConfig {
   @override
   bool? get exitWatchOnFailure;
   @override
+  bool? get useIsolates;
+  @override
   @JsonKey(ignore: true)
   _$$_SupabaseConfigCopyWith<_$_SupabaseConfig> get copyWith =>
       throw _privateConstructorUsedError;
@@ -443,6 +465,7 @@ mixin _$GlobalConfig {
   CompilerLevel? get devCompilerLevel => throw _privateConstructorUsedError;
   CompilerLevel? get prodCompilerLevel => throw _privateConstructorUsedError;
   bool? get exitWatchOnFailure => throw _privateConstructorUsedError;
+  bool? get useIsolates => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -459,7 +482,8 @@ abstract class $GlobalConfigCopyWith<$Res> {
   $Res call(
       {CompilerLevel? devCompilerLevel,
       CompilerLevel? prodCompilerLevel,
-      bool? exitWatchOnFailure});
+      bool? exitWatchOnFailure,
+      bool? useIsolates});
 }
 
 /// @nodoc
@@ -478,6 +502,7 @@ class _$GlobalConfigCopyWithImpl<$Res, $Val extends GlobalConfig>
     Object? devCompilerLevel = freezed,
     Object? prodCompilerLevel = freezed,
     Object? exitWatchOnFailure = freezed,
+    Object? useIsolates = freezed,
   }) {
     return _then(_value.copyWith(
       devCompilerLevel: freezed == devCompilerLevel
@@ -491,6 +516,10 @@ class _$GlobalConfigCopyWithImpl<$Res, $Val extends GlobalConfig>
       exitWatchOnFailure: freezed == exitWatchOnFailure
           ? _value.exitWatchOnFailure
           : exitWatchOnFailure // ignore: cast_nullable_to_non_nullable
+              as bool?,
+      useIsolates: freezed == useIsolates
+          ? _value.useIsolates
+          : useIsolates // ignore: cast_nullable_to_non_nullable
               as bool?,
     ) as $Val);
   }
@@ -507,7 +536,8 @@ abstract class _$$_GlobalConfigCopyWith<$Res>
   $Res call(
       {CompilerLevel? devCompilerLevel,
       CompilerLevel? prodCompilerLevel,
-      bool? exitWatchOnFailure});
+      bool? exitWatchOnFailure,
+      bool? useIsolates});
 }
 
 /// @nodoc
@@ -524,6 +554,7 @@ class __$$_GlobalConfigCopyWithImpl<$Res>
     Object? devCompilerLevel = freezed,
     Object? prodCompilerLevel = freezed,
     Object? exitWatchOnFailure = freezed,
+    Object? useIsolates = freezed,
   }) {
     return _then(_$_GlobalConfig(
       devCompilerLevel: freezed == devCompilerLevel
@@ -538,6 +569,10 @@ class __$$_GlobalConfigCopyWithImpl<$Res>
           ? _value.exitWatchOnFailure
           : exitWatchOnFailure // ignore: cast_nullable_to_non_nullable
               as bool?,
+      useIsolates: freezed == useIsolates
+          ? _value.useIsolates
+          : useIsolates // ignore: cast_nullable_to_non_nullable
+              as bool?,
     ));
   }
 }
@@ -546,7 +581,10 @@ class __$$_GlobalConfigCopyWithImpl<$Res>
 @JsonSerializable()
 class _$_GlobalConfig implements _GlobalConfig {
   const _$_GlobalConfig(
-      {this.devCompilerLevel, this.prodCompilerLevel, this.exitWatchOnFailure});
+      {this.devCompilerLevel,
+      this.prodCompilerLevel,
+      this.exitWatchOnFailure,
+      this.useIsolates});
 
   factory _$_GlobalConfig.fromJson(Map<String, dynamic> json) =>
       _$$_GlobalConfigFromJson(json);
@@ -557,10 +595,12 @@ class _$_GlobalConfig implements _GlobalConfig {
   final CompilerLevel? prodCompilerLevel;
   @override
   final bool? exitWatchOnFailure;
+  @override
+  final bool? useIsolates;
 
   @override
   String toString() {
-    return 'GlobalConfig(devCompilerLevel: $devCompilerLevel, prodCompilerLevel: $prodCompilerLevel, exitWatchOnFailure: $exitWatchOnFailure)';
+    return 'GlobalConfig(devCompilerLevel: $devCompilerLevel, prodCompilerLevel: $prodCompilerLevel, exitWatchOnFailure: $exitWatchOnFailure, useIsolates: $useIsolates)';
   }
 
   @override
@@ -573,13 +613,15 @@ class _$_GlobalConfig implements _GlobalConfig {
             (identical(other.prodCompilerLevel, prodCompilerLevel) ||
                 other.prodCompilerLevel == prodCompilerLevel) &&
             (identical(other.exitWatchOnFailure, exitWatchOnFailure) ||
-                other.exitWatchOnFailure == exitWatchOnFailure));
+                other.exitWatchOnFailure == exitWatchOnFailure) &&
+            (identical(other.useIsolates, useIsolates) ||
+                other.useIsolates == useIsolates));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(
-      runtimeType, devCompilerLevel, prodCompilerLevel, exitWatchOnFailure);
+  int get hashCode => Object.hash(runtimeType, devCompilerLevel,
+      prodCompilerLevel, exitWatchOnFailure, useIsolates);
 
   @JsonKey(ignore: true)
   @override
@@ -599,7 +641,8 @@ abstract class _GlobalConfig implements GlobalConfig {
   const factory _GlobalConfig(
       {final CompilerLevel? devCompilerLevel,
       final CompilerLevel? prodCompilerLevel,
-      final bool? exitWatchOnFailure}) = _$_GlobalConfig;
+      final bool? exitWatchOnFailure,
+      final bool? useIsolates}) = _$_GlobalConfig;
 
   factory _GlobalConfig.fromJson(Map<String, dynamic> json) =
       _$_GlobalConfig.fromJson;
@@ -610,6 +653,8 @@ abstract class _GlobalConfig implements GlobalConfig {
   CompilerLevel? get prodCompilerLevel;
   @override
   bool? get exitWatchOnFailure;
+  @override
+  bool? get useIsolates;
   @override
   @JsonKey(ignore: true)
   _$$_GlobalConfigCopyWith<_$_GlobalConfig> get copyWith =>

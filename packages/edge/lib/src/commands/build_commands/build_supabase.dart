@@ -1,9 +1,11 @@
 import 'dart:async';
 import 'dart:io';
+import 'dart:isolate';
 
 import 'package:edge/src/config.dart';
 import 'package:mason_logger/mason_logger.dart';
 import 'package:path/path.dart' as p;
+import 'package:pool/pool.dart';
 
 import '../../compiler.dart';
 import '../../watcher.dart';
@@ -105,6 +107,17 @@ class SupabaseBuildCommand extends BaseCommand {
   Future<void> runBuild() async {
     final cfg = await getConfig();
 
+    final numberOfProcessors = Platform.numberOfProcessors;
+    final pool = Pool(numberOfProcessors);
+
+    final futures = <Future<_CompilationResult?>>[];
+    final functions = cfg.supabase.functions.keys.toList();
+    final progress = logger.progress('Compiling ${functions.length} functions');
+    final useIsolates = (cfg.get(cfg.supabase, (c) => c.useIsolates) ?? true);
+    if (useIsolates) {
+      logger.detail('Using isolates with pool size $numberOfProcessors');
+    }
+
     for (final fn in cfg.supabase.functions.entries) {
       final fnDir = p.join(cfg.supabase.projectPath, 'functions', fn.key);
       final entryFile = File(p.join(fnDir, 'index.ts'));
@@ -115,16 +128,54 @@ class SupabaseBuildCommand extends BaseCommand {
         outputDirectory: fnDir,
         outputFileName: 'main.dart.js',
         level: cfg.get(cfg.supabase, (c) => c.prodCompilerLevel) ??
-            CompilerLevel.O4,
+            CompilerLevel.O2,
         fileName: fn.value,
+        showProgress: false,
         exitOnError: cfg.get(cfg.supabase, (c) => c.exitWatchOnFailure) ?? true,
+        throwOnError: true,
       );
 
-      await compiler.compile();
+      futures.add(pool.withResource(() async {
+        try {
+          if (useIsolates) {
+            await Isolate.run(() => compiler.compile());
+          } else {
+            await compiler.compile();
+          }
+          return _CompilationResult(fn.key, true);
+        } on CompilerException catch (e) {
+          return _CompilationResult(fn.key, false, e);
+        }
+      }));
 
-      await entryFile.writeAsString(
-        edgeFunctionEntryFileDefaultValue('main.dart.js'),
-      );
+      futures.add(entryFile
+          .writeAsString(
+            edgeFunctionEntryFileDefaultValue('main.dart.js'),
+          )
+          .then((_) => null));
+    }
+    const _clearLine = '\x1b[2K\r';
+    int failures = 0;
+    await for (final res in Stream.fromFutures(futures)) {
+      if (res != null) {
+        // clear the current line
+        functions.remove(res.function);
+        final header = res.success ? lightGreen.wrap('✓') : red.wrap('✗');
+        logger.info('$_clearLine${header} ${res.function}');
+        if (!res.success) {
+          failures++;
+          logger.err(res.exception?.stdout);
+        }
+        progress.update('Compiling ${functions.length} functions');
+      }
+    }
+    stdout.write('$_clearLine\n');
+    if (failures > 0) {
+      progress.fail('Failed to compile $failures functions');
+      exit(1);
+    } else {
+      progress
+          .complete('All ${cfg.supabase.functions.length} functions compiled');
     }
   }
 
@@ -141,6 +192,16 @@ class SupabaseBuildCommand extends BaseCommand {
       await runBuild();
     }
   }
+}
+
+typedef _CompileFn = Future<void> Function(Future<void> Function());
+
+class _CompilationResult {
+  final String function;
+  final bool success;
+  final CompilerException? exception;
+
+  _CompilationResult(this.function, this.success, [this.exception]);
 }
 
 final edgeFunctionEntryFileDefaultValue = (String fileName) => '''

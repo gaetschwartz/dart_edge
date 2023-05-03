@@ -11,6 +11,7 @@ mixin BaseConfig {
   CompilerLevel? get devCompilerLevel;
   CompilerLevel? get prodCompilerLevel;
   bool? get exitWatchOnFailure;
+  bool? get useIsolates;
 
   static T? evaluate<T extends Object>(
       List<BaseConfig> configs, T? Function(BaseConfig) evaluator) {
@@ -59,6 +60,7 @@ class SupabaseConfig with BaseConfig, _$SupabaseConfig {
     CompilerLevel? devCompilerLevel,
     CompilerLevel? prodCompilerLevel,
     bool? exitWatchOnFailure,
+    bool? useIsolates,
   }) = _SupabaseConfig;
 
   factory SupabaseConfig.fromJson(Map<String, dynamic> json) =>
@@ -71,6 +73,7 @@ class GlobalConfig with BaseConfig, _$GlobalConfig {
     CompilerLevel? devCompilerLevel,
     CompilerLevel? prodCompilerLevel,
     bool? exitWatchOnFailure,
+    bool? useIsolates,
   }) = _GlobalConfig;
 
   factory GlobalConfig.fromJson(Map<String, dynamic> json) =>

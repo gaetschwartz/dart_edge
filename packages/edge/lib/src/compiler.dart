@@ -28,6 +28,7 @@ class Compiler {
   final String fileName;
   final bool showProgress;
   final bool exitOnError;
+  final bool throwOnError;
 
   Compiler({
     required this.logger,
@@ -38,6 +39,7 @@ class Compiler {
     this.outputFileName = 'main.dart.js',
     this.showProgress = true,
     this.exitOnError = true,
+    this.throwOnError = false,
   });
 
   Future<String> compile() async {
@@ -70,7 +72,6 @@ class Compiler {
       'compile',
       'js',
       '-${level.name}',
-      '--no-frequency-based-minification',
       '--server-mode',
       '-o',
       outputPath,
@@ -78,6 +79,12 @@ class Compiler {
     ]);
 
     if (process.exitCode != 0) {
+      if (throwOnError)
+        throw CompilerException(
+          exitCode: process.exitCode,
+          stderr: process.stderr as String,
+          stdout: process.stdout as String,
+        );
       progress?.cancel();
       logger.err('Compilation of the Dart entry file failed:');
       logger.lineBreak();
@@ -89,5 +96,23 @@ class Compiler {
     logger.detail(process.stdout);
 
     return outputPath;
+  }
+}
+
+class CompilerException implements Exception {
+  final int exitCode;
+  final String stderr;
+  final String stdout;
+  final String message;
+
+  CompilerException({
+    required this.exitCode,
+    required this.stderr,
+    required this.stdout,
+  }) : message = 'Compiler exited with code $exitCode.';
+
+  @override
+  String toString() {
+    return 'CompilerException: $message';
   }
 }

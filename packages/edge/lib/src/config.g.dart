@@ -52,6 +52,7 @@ _$_SupabaseConfig _$$_SupabaseConfigFromJson(Map<String, dynamic> json) =>
               (v) => $enumDecodeNullable(_$CompilerLevelEnumMap, v)),
           exitWatchOnFailure:
               $checkedConvert('exit_watch_on_failure', (v) => v as bool?),
+          useIsolates: $checkedConvert('use_isolates', (v) => v as bool?),
         );
         return val;
       },
@@ -59,7 +60,8 @@ _$_SupabaseConfig _$$_SupabaseConfigFromJson(Map<String, dynamic> json) =>
         'projectPath': 'project_path',
         'devCompilerLevel': 'dev_compiler_level',
         'prodCompilerLevel': 'prod_compiler_level',
-        'exitWatchOnFailure': 'exit_watch_on_failure'
+        'exitWatchOnFailure': 'exit_watch_on_failure',
+        'useIsolates': 'use_isolates'
       },
     );
 
@@ -70,6 +72,7 @@ Map<String, dynamic> _$$_SupabaseConfigToJson(_$_SupabaseConfig instance) =>
       'dev_compiler_level': _$CompilerLevelEnumMap[instance.devCompilerLevel],
       'prod_compiler_level': _$CompilerLevelEnumMap[instance.prodCompilerLevel],
       'exit_watch_on_failure': instance.exitWatchOnFailure,
+      'use_isolates': instance.useIsolates,
     };
 
 const _$CompilerLevelEnumMap = {
@@ -91,13 +94,15 @@ _$_GlobalConfig _$$_GlobalConfigFromJson(Map<String, dynamic> json) =>
               (v) => $enumDecodeNullable(_$CompilerLevelEnumMap, v)),
           exitWatchOnFailure:
               $checkedConvert('exit_watch_on_failure', (v) => v as bool?),
+          useIsolates: $checkedConvert('use_isolates', (v) => v as bool?),
         );
         return val;
       },
       fieldKeyMap: const {
         'devCompilerLevel': 'dev_compiler_level',
         'prodCompilerLevel': 'prod_compiler_level',
-        'exitWatchOnFailure': 'exit_watch_on_failure'
+        'exitWatchOnFailure': 'exit_watch_on_failure',
+        'useIsolates': 'use_isolates'
       },
     );
 
@@ -106,4 +111,5 @@ Map<String, dynamic> _$$_GlobalConfigToJson(_$_GlobalConfig instance) =>
       'dev_compiler_level': _$CompilerLevelEnumMap[instance.devCompilerLevel],
       'prod_compiler_level': _$CompilerLevelEnumMap[instance.prodCompilerLevel],
       'exit_watch_on_failure': instance.exitWatchOnFailure,
+      'use_isolates': instance.useIsolates,
     };
