@@ -129,7 +129,6 @@ class SupabaseBuildCommand extends BaseCommand {
     }
     final progress =
         logger.progress('Compiling ${functionsToCompile.length} functions');
-    final exitOnError = getProperty((c) => c.exitWatchOnFailure) ?? true;
 
     for (final fn in cfg.supabase.functions.entries) {
       final fnDir = p.join(cfg.supabase.projectPath, 'functions', fn.key);
@@ -146,7 +145,6 @@ class SupabaseBuildCommand extends BaseCommand {
         level: level,
         fileName: fn.value,
         showProgress: false,
-        exitOnError: exitOnError,
         throwOnError: true,
       );
 
