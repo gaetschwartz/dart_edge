@@ -119,7 +119,6 @@ class SupabaseBuildCommand extends BaseCommand {
 
     final pool = Pool(numberOfProcessors);
     final functionsToCompile = cfg.supabase.functions.keys.toList();
-    final futures = <Future<_CompilationResult?>>[];
 
     final useIsolates = getProperty((c) => c.useIsolates) ?? true;
     final level = getProperty((c) => c.prodCompilerLevel) ?? CompilerLevel.O1;
@@ -130,12 +129,13 @@ class SupabaseBuildCommand extends BaseCommand {
     final progress =
         logger.progress('Compiling ${functionsToCompile.length} functions');
 
+    final contents = edgeFunctionEntryFileDefaultValue('main.dart.js');
+
+    final compilations = <Future<FunctionCompilationResult>>[];
+    final ioFutures = <Future>[];
     for (final fn in cfg.supabase.functions.entries) {
       final fnDir = p.join(cfg.supabase.projectPath, 'functions', fn.key);
       final entryFile = File(p.join(fnDir, 'index.ts'));
-      if (!entryFile.parent.existsSync()) {
-        await entryFile.parent.create(recursive: true);
-      }
 
       final compiler = Compiler(
         logger: logger,
@@ -148,40 +148,45 @@ class SupabaseBuildCommand extends BaseCommand {
         throwOnError: true,
       );
 
-      futures.add(pool.withResource(() async {
+      compilations.add(pool.withResource(() async {
         try {
           if (useIsolates) {
             await Isolate.run(() => compiler.compile());
           } else {
             await compiler.compile();
           }
-          return _CompilationResult(fn.key, true);
+          return FunctionCompilationSuccess(fn.key);
         } on CompilerException catch (e) {
-          return _CompilationResult(fn.key, false, e);
+          return FunctionCompilationFailure(fn.key, e);
         }
       }));
 
-      futures.add(entryFile
-          .writeAsString(
-            edgeFunctionEntryFileDefaultValue('main.dart.js'),
-          )
-          .then((_) => null));
+      ioFutures.add(Future(() async {
+        if (!entryFile.parent.existsSync()) {
+          await entryFile.parent.create(recursive: true);
+        }
+        await entryFile.writeAsString(contents);
+      }));
     }
+
     const _clearLine = '\x1b[2K\r';
     int failures = 0;
-    await for (final res in Stream.fromFutures(futures)) {
-      if (res != null) {
-        // clear the current line
-        functionsToCompile.remove(res.function);
-        final header = res.success ? lightGreen.wrap('✓') : red.wrap('✗');
-        logger.info('$_clearLine${header} ${res.function}');
-        if (!res.success) {
-          failures++;
-          logger.err(res.exception?.stdout);
-        }
-        progress.update('Compiling ${functionsToCompile.length} functions');
+    await for (final res in Stream.fromFutures(compilations)) {
+      // clear the current line
+      functionsToCompile.remove(res.function);
+      final header = switch (res) {
+        FunctionCompilationSuccess _ => lightGreen.wrap('✓'),
+        FunctionCompilationFailure _ => red.wrap('✗'),
+      };
+      logger.info('$_clearLine${header} ${res.function}');
+      if (res case FunctionCompilationFailure(:final exception)) {
+        failures++;
+        logger.err(exception.stdout);
       }
+      progress.update('Compiling ${functionsToCompile.length} functions');
     }
+
+    await Future.wait(ioFutures);
 
     stdout.write('$_clearLine\n');
     if (failures > 0) {
@@ -208,12 +213,20 @@ class SupabaseBuildCommand extends BaseCommand {
   }
 }
 
-class _CompilationResult {
+sealed class FunctionCompilationResult {
   final String function;
-  final bool success;
-  final CompilerException? exception;
 
-  _CompilationResult(this.function, this.success, [this.exception]);
+  FunctionCompilationResult(this.function);
+}
+
+class FunctionCompilationSuccess extends FunctionCompilationResult {
+  FunctionCompilationSuccess(super.function);
+}
+
+class FunctionCompilationFailure extends FunctionCompilationResult {
+  final CompilerException exception;
+
+  FunctionCompilationFailure(super.function, this.exception);
 }
 
 final edgeFunctionEntryFileDefaultValue = (String fileName) => '''
