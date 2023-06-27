@@ -10,19 +10,17 @@ part 'config.g.dart';
 mixin BaseConfig {
   CompilerLevel? get devCompilerLevel;
   CompilerLevel? get prodCompilerLevel;
+  int? get isolatePoolSize;
   bool? get exitWatchOnFailure;
   bool? get useIsolates;
 
   static T? evaluate<T extends Object>(
-      List<BaseConfig> configs, T? Function(BaseConfig) evaluator) {
-    // iterate in reverse order so that the last config in the list takes precedence
-    for (var i = configs.length - 1; i >= 0; i--) {
-      final result = evaluator(configs[i]);
-      if (result != null) {
-        return result;
-      }
-    }
-    return null;
+    List<BaseConfig> configs,
+    T? Function(BaseConfig) propertyGetter,
+  ) {
+    return configs.reversed
+        .map(propertyGetter)
+        .firstWhere((e) => e != null, orElse: () => null);
   }
 }
 
@@ -45,9 +43,9 @@ class Config with _$Config {
 
   T? get<T extends Object>(
     BaseConfig cfg,
-    T? Function(BaseConfig cfg) getter,
+    T? Function(BaseConfig cfg) propertyGetter,
   ) {
-    return BaseConfig.evaluate([global, cfg], getter);
+    return BaseConfig.evaluate([global, cfg], propertyGetter);
   }
 }
 
@@ -56,11 +54,12 @@ class SupabaseConfig with BaseConfig, _$SupabaseConfig {
   const factory SupabaseConfig({
     @Default('.') String projectPath,
     @Default(<String, String>{'dart_edge': 'lib/main.dart'})
-        Map<String, String> functions,
+    Map<String, String> functions,
     CompilerLevel? devCompilerLevel,
     CompilerLevel? prodCompilerLevel,
     bool? exitWatchOnFailure,
     bool? useIsolates,
+    int? isolatePoolSize,
   }) = _SupabaseConfig;
 
   factory SupabaseConfig.fromJson(Map<String, dynamic> json) =>
@@ -74,6 +73,7 @@ class GlobalConfig with BaseConfig, _$GlobalConfig {
     CompilerLevel? prodCompilerLevel,
     bool? exitWatchOnFailure,
     bool? useIsolates,
+    int? isolatePoolSize,
   }) = _GlobalConfig;
 
   factory GlobalConfig.fromJson(Map<String, dynamic> json) =>

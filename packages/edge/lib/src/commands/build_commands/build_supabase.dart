@@ -49,10 +49,12 @@ class SupabaseBuildCommand extends BaseCommand {
     return config;
   }
 
+  BaseConfig get subConfig => config.supabase;
+
   Future<void> runDev() async {
     final cfg = await getConfig();
-    final exitOnError =
-        cfg.get(cfg.supabase, (c) => c.exitWatchOnFailure) ?? true;
+
+    final exitOnError = getProperty((c) => c.exitWatchOnFailure) ?? true;
     logger.detail("Watcher will ${exitOnError ? '' : 'not '}exit on error.");
 
     final watcher = Watcher(
@@ -65,6 +67,9 @@ class SupabaseBuildCommand extends BaseCommand {
     final futures = <Future>[];
     final progress = logger.progress(
         'Compiling ' + cfg.supabase.functions.length.toString() + ' functions');
+    final devCompilerLevel =
+        getProperty((c) => c.devCompilerLevel) ?? CompilerLevel.O1;
+
     for (final fn in cfg.supabase.functions.entries) {
       final fnDir = p.join(cfg.supabase.projectPath, 'functions', fn.key);
       final entryFile = File(p.join(fnDir, 'index.ts'));
@@ -77,8 +82,7 @@ class SupabaseBuildCommand extends BaseCommand {
         entryPoint: p.join(Directory.current.path, fn.value),
         outputDirectory: fnDir,
         outputFileName: 'main.dart.js',
-        level: cfg.get(cfg.supabase, (c) => c.devCompilerLevel) ??
-            CompilerLevel.O1,
+        level: devCompilerLevel,
         fileName: fn.value,
         showProgress: false,
         exitOnError: exitOnError,
@@ -110,16 +114,22 @@ class SupabaseBuildCommand extends BaseCommand {
   Future<void> runBuild() async {
     final cfg = await getConfig();
 
-    final numberOfProcessors = Platform.numberOfProcessors;
-    final pool = Pool(numberOfProcessors);
+    final numberOfProcessors = getProperty((cfg) => cfg.isolatePoolSize) ??
+        Platform.numberOfProcessors;
 
+    final pool = Pool(numberOfProcessors);
+    final functionsToCompile = cfg.supabase.functions.keys.toList();
     final futures = <Future<_CompilationResult?>>[];
-    final functions = cfg.supabase.functions.keys.toList();
-    final progress = logger.progress('Compiling ${functions.length} functions');
-    final useIsolates = (cfg.get(cfg.supabase, (c) => c.useIsolates) ?? true);
+
+    final useIsolates = getProperty((c) => c.useIsolates) ?? true;
+    final level = getProperty((c) => c.prodCompilerLevel) ?? CompilerLevel.O1;
+
     if (useIsolates) {
       logger.detail('Using isolates with pool size $numberOfProcessors');
     }
+    final progress =
+        logger.progress('Compiling ${functionsToCompile.length} functions');
+    final exitOnError = getProperty((c) => c.exitWatchOnFailure) ?? true;
 
     for (final fn in cfg.supabase.functions.entries) {
       final fnDir = p.join(cfg.supabase.projectPath, 'functions', fn.key);
@@ -133,11 +143,10 @@ class SupabaseBuildCommand extends BaseCommand {
         entryPoint: p.join(Directory.current.path, fn.value),
         outputDirectory: fnDir,
         outputFileName: 'main.dart.js',
-        level: cfg.get(cfg.supabase, (c) => c.prodCompilerLevel) ??
-            CompilerLevel.O2,
+        level: level,
         fileName: fn.value,
         showProgress: false,
-        exitOnError: cfg.get(cfg.supabase, (c) => c.exitWatchOnFailure) ?? true,
+        exitOnError: exitOnError,
         throwOnError: true,
       );
 
@@ -165,16 +174,17 @@ class SupabaseBuildCommand extends BaseCommand {
     await for (final res in Stream.fromFutures(futures)) {
       if (res != null) {
         // clear the current line
-        functions.remove(res.function);
+        functionsToCompile.remove(res.function);
         final header = res.success ? lightGreen.wrap('✓') : red.wrap('✗');
         logger.info('$_clearLine${header} ${res.function}');
         if (!res.success) {
           failures++;
           logger.err(res.exception?.stdout);
         }
-        progress.update('Compiling ${functions.length} functions');
+        progress.update('Compiling ${functionsToCompile.length} functions');
       }
     }
+
     stdout.write('$_clearLine\n');
     if (failures > 0) {
       progress.fail('Failed to compile $failures functions');
@@ -199,8 +209,6 @@ class SupabaseBuildCommand extends BaseCommand {
     }
   }
 }
-
-typedef _CompileFn = Future<void> Function(Future<void> Function());
 
 class _CompilationResult {
   final String function;

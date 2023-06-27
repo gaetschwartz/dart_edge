@@ -53,6 +53,8 @@ _$_SupabaseConfig _$$_SupabaseConfigFromJson(Map<String, dynamic> json) =>
           exitWatchOnFailure:
               $checkedConvert('exit_watch_on_failure', (v) => v as bool?),
           useIsolates: $checkedConvert('use_isolates', (v) => v as bool?),
+          isolatePoolSize:
+              $checkedConvert('isolate_pool_size', (v) => v as int?),
         );
         return val;
       },
@@ -61,7 +63,8 @@ _$_SupabaseConfig _$$_SupabaseConfigFromJson(Map<String, dynamic> json) =>
         'devCompilerLevel': 'dev_compiler_level',
         'prodCompilerLevel': 'prod_compiler_level',
         'exitWatchOnFailure': 'exit_watch_on_failure',
-        'useIsolates': 'use_isolates'
+        'useIsolates': 'use_isolates',
+        'isolatePoolSize': 'isolate_pool_size'
       },
     );
 
@@ -73,6 +76,7 @@ Map<String, dynamic> _$$_SupabaseConfigToJson(_$_SupabaseConfig instance) =>
       'prod_compiler_level': _$CompilerLevelEnumMap[instance.prodCompilerLevel],
       'exit_watch_on_failure': instance.exitWatchOnFailure,
       'use_isolates': instance.useIsolates,
+      'isolate_pool_size': instance.isolatePoolSize,
     };
 
 const _$CompilerLevelEnumMap = {
@@ -95,6 +99,8 @@ _$_GlobalConfig _$$_GlobalConfigFromJson(Map<String, dynamic> json) =>
           exitWatchOnFailure:
               $checkedConvert('exit_watch_on_failure', (v) => v as bool?),
           useIsolates: $checkedConvert('use_isolates', (v) => v as bool?),
+          isolatePoolSize:
+              $checkedConvert('isolate_pool_size', (v) => v as int?),
         );
         return val;
       },
@@ -102,7 +108,8 @@ _$_GlobalConfig _$$_GlobalConfigFromJson(Map<String, dynamic> json) =>
         'devCompilerLevel': 'dev_compiler_level',
         'prodCompilerLevel': 'prod_compiler_level',
         'exitWatchOnFailure': 'exit_watch_on_failure',
-        'useIsolates': 'use_isolates'
+        'useIsolates': 'use_isolates',
+        'isolatePoolSize': 'isolate_pool_size'
       },
     );
 
@@ -112,4 +119,5 @@ Map<String, dynamic> _$$_GlobalConfigToJson(_$_GlobalConfig instance) =>
       'prod_compiler_level': _$CompilerLevelEnumMap[instance.prodCompilerLevel],
       'exit_watch_on_failure': instance.exitWatchOnFailure,
       'use_isolates': instance.useIsolates,
+      'isolate_pool_size': instance.isolatePoolSize,
     };
