@@ -99,12 +99,14 @@ extension on YamlNode {
 }
 
 class EntryPointsConverter
-    implements JsonConverter<List<EntryPoint>, Map<String, String>> {
+    implements JsonConverter<List<EntryPoint>, Map<String, dynamic>> {
   const EntryPointsConverter();
 
   @override
-  List<EntryPoint> fromJson(Map<String, String> json) {
-    return json.entries.map((e) => EntryPoint(e.value, name: e.key)).toList();
+  List<EntryPoint> fromJson(Map<String, dynamic> json) {
+    return json.entries
+        .map((e) => EntryPoint(e.value as String, name: e.key))
+        .toList();
   }
 
   @override

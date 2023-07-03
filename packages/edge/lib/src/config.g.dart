@@ -44,7 +44,7 @@ _$_SupabaseConfig _$$_SupabaseConfigFromJson(Map<String, dynamic> json) =>
               (v) => v == null
                   ? const [EntryPoint('lib/main.dart', name: 'dart_edge')]
                   : const EntryPointsConverter()
-                      .fromJson(v as Map<String, String>)),
+                      .fromJson(v as Map<String, dynamic>)),
           devCompilerLevel: $checkedConvert('dev_compiler_level',
               (v) => $enumDecodeNullable(_$CompilerLevelEnumMap, v)),
           prodCompilerLevel: $checkedConvert('prod_compiler_level',
