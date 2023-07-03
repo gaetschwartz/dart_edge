@@ -121,6 +121,8 @@ class SupabaseBuildCommand extends BaseCommand {
       exitOnError: exitOnError,
     );
 
+    await compiler.compile(cfg.supabase.functions);
+
     watcher.watch().listen((event) async {
       await compiler.compile(cfg.supabase.functions);
     });
