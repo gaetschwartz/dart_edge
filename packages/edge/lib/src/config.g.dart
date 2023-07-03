@@ -52,9 +52,9 @@ _$_SupabaseConfig _$$_SupabaseConfigFromJson(Map<String, dynamic> json) =>
               (v) => $enumDecodeNullable(_$CompilerLevelEnumMap, v)),
           exitWatchOnFailure:
               $checkedConvert('exit_watch_on_failure', (v) => v as bool?),
-          useIsolates: $checkedConvert('use_isolates', (v) => v as bool?),
-          isolatePoolSize:
-              $checkedConvert('isolate_pool_size', (v) => v as int?),
+          additionalCompilerArgs: $checkedConvert('additional_compiler_args',
+              (v) => (v as List<dynamic>?)?.map((e) => e as String).toList()),
+          isolates: $checkedConvert('isolates', (v) => v as int?),
         );
         return val;
       },
@@ -63,8 +63,7 @@ _$_SupabaseConfig _$$_SupabaseConfigFromJson(Map<String, dynamic> json) =>
         'devCompilerLevel': 'dev_compiler_level',
         'prodCompilerLevel': 'prod_compiler_level',
         'exitWatchOnFailure': 'exit_watch_on_failure',
-        'useIsolates': 'use_isolates',
-        'isolatePoolSize': 'isolate_pool_size'
+        'additionalCompilerArgs': 'additional_compiler_args'
       },
     );
 
@@ -75,11 +74,12 @@ Map<String, dynamic> _$$_SupabaseConfigToJson(_$_SupabaseConfig instance) =>
       'dev_compiler_level': _$CompilerLevelEnumMap[instance.devCompilerLevel],
       'prod_compiler_level': _$CompilerLevelEnumMap[instance.prodCompilerLevel],
       'exit_watch_on_failure': instance.exitWatchOnFailure,
-      'use_isolates': instance.useIsolates,
-      'isolate_pool_size': instance.isolatePoolSize,
+      'additional_compiler_args': instance.additionalCompilerArgs,
+      'isolates': instance.isolates,
     };
 
 const _$CompilerLevelEnumMap = {
+  CompilerLevel.O0: 'O0',
   CompilerLevel.O1: 'O1',
   CompilerLevel.O2: 'O2',
   CompilerLevel.O3: 'O3',
@@ -98,9 +98,9 @@ _$_GlobalConfig _$$_GlobalConfigFromJson(Map<String, dynamic> json) =>
               (v) => $enumDecodeNullable(_$CompilerLevelEnumMap, v)),
           exitWatchOnFailure:
               $checkedConvert('exit_watch_on_failure', (v) => v as bool?),
-          useIsolates: $checkedConvert('use_isolates', (v) => v as bool?),
-          isolatePoolSize:
-              $checkedConvert('isolate_pool_size', (v) => v as int?),
+          isolates: $checkedConvert('isolates', (v) => v as int?),
+          additionalCompilerArgs: $checkedConvert('additional_compiler_args',
+              (v) => (v as List<dynamic>?)?.map((e) => e as String).toList()),
         );
         return val;
       },
@@ -108,8 +108,7 @@ _$_GlobalConfig _$$_GlobalConfigFromJson(Map<String, dynamic> json) =>
         'devCompilerLevel': 'dev_compiler_level',
         'prodCompilerLevel': 'prod_compiler_level',
         'exitWatchOnFailure': 'exit_watch_on_failure',
-        'useIsolates': 'use_isolates',
-        'isolatePoolSize': 'isolate_pool_size'
+        'additionalCompilerArgs': 'additional_compiler_args'
       },
     );
 
@@ -118,6 +117,6 @@ Map<String, dynamic> _$$_GlobalConfigToJson(_$_GlobalConfig instance) =>
       'dev_compiler_level': _$CompilerLevelEnumMap[instance.devCompilerLevel],
       'prod_compiler_level': _$CompilerLevelEnumMap[instance.prodCompilerLevel],
       'exit_watch_on_failure': instance.exitWatchOnFailure,
-      'use_isolates': instance.useIsolates,
-      'isolate_pool_size': instance.isolatePoolSize,
+      'isolates': instance.isolates,
+      'additional_compiler_args': instance.additionalCompilerArgs,
     };

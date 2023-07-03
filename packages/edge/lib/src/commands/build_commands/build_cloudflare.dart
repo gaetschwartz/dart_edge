@@ -1,12 +1,12 @@
 import 'dart:io';
+
 import 'package:edge/src/logger.dart';
 import 'package:mason_logger/mason_logger.dart';
 import 'package:path/path.dart' as p;
 
 import '../../compiler.dart';
-import '../base_command.dart';
-
 import '../../platforms/cloudflare_workers.dart';
+import '../base_command.dart';
 
 class CloudflareBuildCommand extends BaseCommand {
   CloudflareWorkers workers = CloudflareWorkers();
@@ -47,7 +47,7 @@ class CloudflareBuildCommand extends BaseCommand {
       exit(1);
     }
 
-    final compiler = Compiler(
+    final compiler = ConsoleCompiler(
       logger: logger,
       entryPoint: p.join(Directory.current.path, 'lib', 'main.dart'),
       outputDirectory: workers.edgeToolDirectory.path,

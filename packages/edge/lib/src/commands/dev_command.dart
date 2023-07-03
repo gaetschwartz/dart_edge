@@ -28,7 +28,7 @@ class DevCommand extends BaseCommand {
     final devServer = DevServer(
       logger: logger,
       port: argResults!['port'],
-      compiler: Compiler(
+      compiler: ConsoleCompiler(
         logger: logger,
         entryPoint: p.join(Directory.current.path, 'lib', 'main.dart'),
         outputDirectory: edgeTool.path,

@@ -42,18 +42,14 @@ class VercelBuildCommand extends BaseCommand {
     return argResults!['use-filesystem'] as bool;
   }
 
-  Future<String> _compile(
-    String outputDirectory, {
-    required CompilerLevel level,
-  }) async {
+  Future<String> _compile(String outputDirectory) async {
     final outFileName = 'main.dart.js';
 
-    final compiler = Compiler(
+    final compiler = ConsoleCompiler(
       logger: logger,
       entryPoint: p.join(Directory.current.path, 'lib', 'main.dart'),
       outputDirectory: outputDirectory,
       outputFileName: outFileName,
-      level: level,
     );
 
     await compiler.compile();
@@ -68,12 +64,11 @@ class VercelBuildCommand extends BaseCommand {
     final devServer = DevServer(
       logger: logger,
       startScript: devAddEventListener,
-      compiler: Compiler(
+      compiler: ConsoleCompiler(
         logger: logger,
         entryPoint: p.join(Directory.current.path, 'lib', 'main.dart'),
         outputDirectory: edgeTool.path,
         outputFileName: 'main.dart.js',
-        level: CompilerLevel.O1,
       ),
     );
 
@@ -89,10 +84,7 @@ class VercelBuildCommand extends BaseCommand {
       p.join(vercelDirectory.path, 'output', 'functions', 'dart.func'),
     );
 
-    await _compile(
-      edgeFunction.path,
-      level: CompilerLevel.O4,
-    );
+    await _compile(edgeFunction.path);
 
     final configFile =
         File(p.join(vercelDirectory.path, 'output', 'config.json'));

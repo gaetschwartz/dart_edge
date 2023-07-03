@@ -203,8 +203,9 @@ mixin _$SupabaseConfig {
   CompilerLevel? get devCompilerLevel => throw _privateConstructorUsedError;
   CompilerLevel? get prodCompilerLevel => throw _privateConstructorUsedError;
   bool? get exitWatchOnFailure => throw _privateConstructorUsedError;
-  bool? get useIsolates => throw _privateConstructorUsedError;
-  int? get isolatePoolSize => throw _privateConstructorUsedError;
+  List<String>? get additionalCompilerArgs =>
+      throw _privateConstructorUsedError;
+  int? get isolates => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -224,8 +225,8 @@ abstract class $SupabaseConfigCopyWith<$Res> {
       CompilerLevel? devCompilerLevel,
       CompilerLevel? prodCompilerLevel,
       bool? exitWatchOnFailure,
-      bool? useIsolates,
-      int? isolatePoolSize});
+      List<String>? additionalCompilerArgs,
+      int? isolates});
 }
 
 /// @nodoc
@@ -246,8 +247,8 @@ class _$SupabaseConfigCopyWithImpl<$Res, $Val extends SupabaseConfig>
     Object? devCompilerLevel = freezed,
     Object? prodCompilerLevel = freezed,
     Object? exitWatchOnFailure = freezed,
-    Object? useIsolates = freezed,
-    Object? isolatePoolSize = freezed,
+    Object? additionalCompilerArgs = freezed,
+    Object? isolates = freezed,
   }) {
     return _then(_value.copyWith(
       projectPath: null == projectPath
@@ -270,13 +271,13 @@ class _$SupabaseConfigCopyWithImpl<$Res, $Val extends SupabaseConfig>
           ? _value.exitWatchOnFailure
           : exitWatchOnFailure // ignore: cast_nullable_to_non_nullable
               as bool?,
-      useIsolates: freezed == useIsolates
-          ? _value.useIsolates
-          : useIsolates // ignore: cast_nullable_to_non_nullable
-              as bool?,
-      isolatePoolSize: freezed == isolatePoolSize
-          ? _value.isolatePoolSize
-          : isolatePoolSize // ignore: cast_nullable_to_non_nullable
+      additionalCompilerArgs: freezed == additionalCompilerArgs
+          ? _value.additionalCompilerArgs
+          : additionalCompilerArgs // ignore: cast_nullable_to_non_nullable
+              as List<String>?,
+      isolates: freezed == isolates
+          ? _value.isolates
+          : isolates // ignore: cast_nullable_to_non_nullable
               as int?,
     ) as $Val);
   }
@@ -296,8 +297,8 @@ abstract class _$$_SupabaseConfigCopyWith<$Res>
       CompilerLevel? devCompilerLevel,
       CompilerLevel? prodCompilerLevel,
       bool? exitWatchOnFailure,
-      bool? useIsolates,
-      int? isolatePoolSize});
+      List<String>? additionalCompilerArgs,
+      int? isolates});
 }
 
 /// @nodoc
@@ -316,8 +317,8 @@ class __$$_SupabaseConfigCopyWithImpl<$Res>
     Object? devCompilerLevel = freezed,
     Object? prodCompilerLevel = freezed,
     Object? exitWatchOnFailure = freezed,
-    Object? useIsolates = freezed,
-    Object? isolatePoolSize = freezed,
+    Object? additionalCompilerArgs = freezed,
+    Object? isolates = freezed,
   }) {
     return _then(_$_SupabaseConfig(
       projectPath: null == projectPath
@@ -340,13 +341,13 @@ class __$$_SupabaseConfigCopyWithImpl<$Res>
           ? _value.exitWatchOnFailure
           : exitWatchOnFailure // ignore: cast_nullable_to_non_nullable
               as bool?,
-      useIsolates: freezed == useIsolates
-          ? _value.useIsolates
-          : useIsolates // ignore: cast_nullable_to_non_nullable
-              as bool?,
-      isolatePoolSize: freezed == isolatePoolSize
-          ? _value.isolatePoolSize
-          : isolatePoolSize // ignore: cast_nullable_to_non_nullable
+      additionalCompilerArgs: freezed == additionalCompilerArgs
+          ? _value._additionalCompilerArgs
+          : additionalCompilerArgs // ignore: cast_nullable_to_non_nullable
+              as List<String>?,
+      isolates: freezed == isolates
+          ? _value.isolates
+          : isolates // ignore: cast_nullable_to_non_nullable
               as int?,
     ));
   }
@@ -363,9 +364,10 @@ class _$_SupabaseConfig implements _SupabaseConfig {
       this.devCompilerLevel,
       this.prodCompilerLevel,
       this.exitWatchOnFailure,
-      this.useIsolates,
-      this.isolatePoolSize})
-      : _functions = functions;
+      final List<String>? additionalCompilerArgs,
+      this.isolates})
+      : _functions = functions,
+        _additionalCompilerArgs = additionalCompilerArgs;
 
   factory _$_SupabaseConfig.fromJson(Map<String, dynamic> json) =>
       _$$_SupabaseConfigFromJson(json);
@@ -388,14 +390,23 @@ class _$_SupabaseConfig implements _SupabaseConfig {
   final CompilerLevel? prodCompilerLevel;
   @override
   final bool? exitWatchOnFailure;
+  final List<String>? _additionalCompilerArgs;
   @override
-  final bool? useIsolates;
+  List<String>? get additionalCompilerArgs {
+    final value = _additionalCompilerArgs;
+    if (value == null) return null;
+    if (_additionalCompilerArgs is EqualUnmodifiableListView)
+      return _additionalCompilerArgs;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
+
   @override
-  final int? isolatePoolSize;
+  final int? isolates;
 
   @override
   String toString() {
-    return 'SupabaseConfig(projectPath: $projectPath, functions: $functions, devCompilerLevel: $devCompilerLevel, prodCompilerLevel: $prodCompilerLevel, exitWatchOnFailure: $exitWatchOnFailure, useIsolates: $useIsolates, isolatePoolSize: $isolatePoolSize)';
+    return 'SupabaseConfig(projectPath: $projectPath, functions: $functions, devCompilerLevel: $devCompilerLevel, prodCompilerLevel: $prodCompilerLevel, exitWatchOnFailure: $exitWatchOnFailure, additionalCompilerArgs: $additionalCompilerArgs, isolates: $isolates)';
   }
 
   @override
@@ -413,10 +424,10 @@ class _$_SupabaseConfig implements _SupabaseConfig {
                 other.prodCompilerLevel == prodCompilerLevel) &&
             (identical(other.exitWatchOnFailure, exitWatchOnFailure) ||
                 other.exitWatchOnFailure == exitWatchOnFailure) &&
-            (identical(other.useIsolates, useIsolates) ||
-                other.useIsolates == useIsolates) &&
-            (identical(other.isolatePoolSize, isolatePoolSize) ||
-                other.isolatePoolSize == isolatePoolSize));
+            const DeepCollectionEquality().equals(
+                other._additionalCompilerArgs, _additionalCompilerArgs) &&
+            (identical(other.isolates, isolates) ||
+                other.isolates == isolates));
   }
 
   @JsonKey(ignore: true)
@@ -428,8 +439,8 @@ class _$_SupabaseConfig implements _SupabaseConfig {
       devCompilerLevel,
       prodCompilerLevel,
       exitWatchOnFailure,
-      useIsolates,
-      isolatePoolSize);
+      const DeepCollectionEquality().hash(_additionalCompilerArgs),
+      isolates);
 
   @JsonKey(ignore: true)
   @override
@@ -452,8 +463,8 @@ abstract class _SupabaseConfig implements SupabaseConfig {
       final CompilerLevel? devCompilerLevel,
       final CompilerLevel? prodCompilerLevel,
       final bool? exitWatchOnFailure,
-      final bool? useIsolates,
-      final int? isolatePoolSize}) = _$_SupabaseConfig;
+      final List<String>? additionalCompilerArgs,
+      final int? isolates}) = _$_SupabaseConfig;
 
   factory _SupabaseConfig.fromJson(Map<String, dynamic> json) =
       _$_SupabaseConfig.fromJson;
@@ -469,9 +480,9 @@ abstract class _SupabaseConfig implements SupabaseConfig {
   @override
   bool? get exitWatchOnFailure;
   @override
-  bool? get useIsolates;
+  List<String>? get additionalCompilerArgs;
   @override
-  int? get isolatePoolSize;
+  int? get isolates;
   @override
   @JsonKey(ignore: true)
   _$$_SupabaseConfigCopyWith<_$_SupabaseConfig> get copyWith =>
@@ -487,8 +498,9 @@ mixin _$GlobalConfig {
   CompilerLevel? get devCompilerLevel => throw _privateConstructorUsedError;
   CompilerLevel? get prodCompilerLevel => throw _privateConstructorUsedError;
   bool? get exitWatchOnFailure => throw _privateConstructorUsedError;
-  bool? get useIsolates => throw _privateConstructorUsedError;
-  int? get isolatePoolSize => throw _privateConstructorUsedError;
+  int? get isolates => throw _privateConstructorUsedError;
+  List<String>? get additionalCompilerArgs =>
+      throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -506,8 +518,8 @@ abstract class $GlobalConfigCopyWith<$Res> {
       {CompilerLevel? devCompilerLevel,
       CompilerLevel? prodCompilerLevel,
       bool? exitWatchOnFailure,
-      bool? useIsolates,
-      int? isolatePoolSize});
+      int? isolates,
+      List<String>? additionalCompilerArgs});
 }
 
 /// @nodoc
@@ -526,8 +538,8 @@ class _$GlobalConfigCopyWithImpl<$Res, $Val extends GlobalConfig>
     Object? devCompilerLevel = freezed,
     Object? prodCompilerLevel = freezed,
     Object? exitWatchOnFailure = freezed,
-    Object? useIsolates = freezed,
-    Object? isolatePoolSize = freezed,
+    Object? isolates = freezed,
+    Object? additionalCompilerArgs = freezed,
   }) {
     return _then(_value.copyWith(
       devCompilerLevel: freezed == devCompilerLevel
@@ -542,14 +554,14 @@ class _$GlobalConfigCopyWithImpl<$Res, $Val extends GlobalConfig>
           ? _value.exitWatchOnFailure
           : exitWatchOnFailure // ignore: cast_nullable_to_non_nullable
               as bool?,
-      useIsolates: freezed == useIsolates
-          ? _value.useIsolates
-          : useIsolates // ignore: cast_nullable_to_non_nullable
-              as bool?,
-      isolatePoolSize: freezed == isolatePoolSize
-          ? _value.isolatePoolSize
-          : isolatePoolSize // ignore: cast_nullable_to_non_nullable
+      isolates: freezed == isolates
+          ? _value.isolates
+          : isolates // ignore: cast_nullable_to_non_nullable
               as int?,
+      additionalCompilerArgs: freezed == additionalCompilerArgs
+          ? _value.additionalCompilerArgs
+          : additionalCompilerArgs // ignore: cast_nullable_to_non_nullable
+              as List<String>?,
     ) as $Val);
   }
 }
@@ -566,8 +578,8 @@ abstract class _$$_GlobalConfigCopyWith<$Res>
       {CompilerLevel? devCompilerLevel,
       CompilerLevel? prodCompilerLevel,
       bool? exitWatchOnFailure,
-      bool? useIsolates,
-      int? isolatePoolSize});
+      int? isolates,
+      List<String>? additionalCompilerArgs});
 }
 
 /// @nodoc
@@ -584,8 +596,8 @@ class __$$_GlobalConfigCopyWithImpl<$Res>
     Object? devCompilerLevel = freezed,
     Object? prodCompilerLevel = freezed,
     Object? exitWatchOnFailure = freezed,
-    Object? useIsolates = freezed,
-    Object? isolatePoolSize = freezed,
+    Object? isolates = freezed,
+    Object? additionalCompilerArgs = freezed,
   }) {
     return _then(_$_GlobalConfig(
       devCompilerLevel: freezed == devCompilerLevel
@@ -600,14 +612,14 @@ class __$$_GlobalConfigCopyWithImpl<$Res>
           ? _value.exitWatchOnFailure
           : exitWatchOnFailure // ignore: cast_nullable_to_non_nullable
               as bool?,
-      useIsolates: freezed == useIsolates
-          ? _value.useIsolates
-          : useIsolates // ignore: cast_nullable_to_non_nullable
-              as bool?,
-      isolatePoolSize: freezed == isolatePoolSize
-          ? _value.isolatePoolSize
-          : isolatePoolSize // ignore: cast_nullable_to_non_nullable
+      isolates: freezed == isolates
+          ? _value.isolates
+          : isolates // ignore: cast_nullable_to_non_nullable
               as int?,
+      additionalCompilerArgs: freezed == additionalCompilerArgs
+          ? _value._additionalCompilerArgs
+          : additionalCompilerArgs // ignore: cast_nullable_to_non_nullable
+              as List<String>?,
     ));
   }
 }
@@ -619,8 +631,9 @@ class _$_GlobalConfig implements _GlobalConfig {
       {this.devCompilerLevel,
       this.prodCompilerLevel,
       this.exitWatchOnFailure,
-      this.useIsolates,
-      this.isolatePoolSize});
+      this.isolates,
+      final List<String>? additionalCompilerArgs})
+      : _additionalCompilerArgs = additionalCompilerArgs;
 
   factory _$_GlobalConfig.fromJson(Map<String, dynamic> json) =>
       _$$_GlobalConfigFromJson(json);
@@ -632,13 +645,21 @@ class _$_GlobalConfig implements _GlobalConfig {
   @override
   final bool? exitWatchOnFailure;
   @override
-  final bool? useIsolates;
+  final int? isolates;
+  final List<String>? _additionalCompilerArgs;
   @override
-  final int? isolatePoolSize;
+  List<String>? get additionalCompilerArgs {
+    final value = _additionalCompilerArgs;
+    if (value == null) return null;
+    if (_additionalCompilerArgs is EqualUnmodifiableListView)
+      return _additionalCompilerArgs;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
 
   @override
   String toString() {
-    return 'GlobalConfig(devCompilerLevel: $devCompilerLevel, prodCompilerLevel: $prodCompilerLevel, exitWatchOnFailure: $exitWatchOnFailure, useIsolates: $useIsolates, isolatePoolSize: $isolatePoolSize)';
+    return 'GlobalConfig(devCompilerLevel: $devCompilerLevel, prodCompilerLevel: $prodCompilerLevel, exitWatchOnFailure: $exitWatchOnFailure, isolates: $isolates, additionalCompilerArgs: $additionalCompilerArgs)';
   }
 
   @override
@@ -652,16 +673,21 @@ class _$_GlobalConfig implements _GlobalConfig {
                 other.prodCompilerLevel == prodCompilerLevel) &&
             (identical(other.exitWatchOnFailure, exitWatchOnFailure) ||
                 other.exitWatchOnFailure == exitWatchOnFailure) &&
-            (identical(other.useIsolates, useIsolates) ||
-                other.useIsolates == useIsolates) &&
-            (identical(other.isolatePoolSize, isolatePoolSize) ||
-                other.isolatePoolSize == isolatePoolSize));
+            (identical(other.isolates, isolates) ||
+                other.isolates == isolates) &&
+            const DeepCollectionEquality().equals(
+                other._additionalCompilerArgs, _additionalCompilerArgs));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(runtimeType, devCompilerLevel,
-      prodCompilerLevel, exitWatchOnFailure, useIsolates, isolatePoolSize);
+  int get hashCode => Object.hash(
+      runtimeType,
+      devCompilerLevel,
+      prodCompilerLevel,
+      exitWatchOnFailure,
+      isolates,
+      const DeepCollectionEquality().hash(_additionalCompilerArgs));
 
   @JsonKey(ignore: true)
   @override
@@ -682,8 +708,8 @@ abstract class _GlobalConfig implements GlobalConfig {
       {final CompilerLevel? devCompilerLevel,
       final CompilerLevel? prodCompilerLevel,
       final bool? exitWatchOnFailure,
-      final bool? useIsolates,
-      final int? isolatePoolSize}) = _$_GlobalConfig;
+      final int? isolates,
+      final List<String>? additionalCompilerArgs}) = _$_GlobalConfig;
 
   factory _GlobalConfig.fromJson(Map<String, dynamic> json) =
       _$_GlobalConfig.fromJson;
@@ -695,9 +721,9 @@ abstract class _GlobalConfig implements GlobalConfig {
   @override
   bool? get exitWatchOnFailure;
   @override
-  bool? get useIsolates;
+  int? get isolates;
   @override
-  int? get isolatePoolSize;
+  List<String>? get additionalCompilerArgs;
   @override
   @JsonKey(ignore: true)
   _$$_GlobalConfigCopyWith<_$_GlobalConfig> get copyWith =>

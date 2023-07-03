@@ -1,15 +1,16 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+
 import 'package:mason_logger/mason_logger.dart';
-import 'package:watcher/watcher.dart';
 import 'package:path/path.dart' as p;
+import 'package:watcher/watcher.dart';
 
 import 'compiler.dart';
 
 class DevServer {
   final Logger logger;
-  final Compiler compiler;
+  final ConsoleCompiler compiler;
   final String? startScript;
   final String? port;
 
@@ -37,16 +38,16 @@ class DevServer {
   }
 
   Future<String> _compile() async {
-    final compiledFile = await compiler.compile();
+    await compiler.compile();
 
     if (startScript != null) {
-      await File(compiledFile).writeAsString(
+      await File(compiler.outputFilePath).writeAsString(
         startScript!,
         mode: FileMode.append,
       );
     }
 
-    return compiledFile;
+    return compiler.outputFilePath;
   }
 
   Future<void> start() async {

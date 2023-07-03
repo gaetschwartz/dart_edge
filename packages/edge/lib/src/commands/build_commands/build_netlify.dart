@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+
 import 'package:path/path.dart' as p;
 
 import '../../compiler.dart';
@@ -29,7 +30,7 @@ class NetlifyBuildCommand extends BaseCommand {
       p.join(Directory.current.path, '.netlify', 'edge-functions', 'dart_edge'),
     );
 
-    final compiler = Compiler(
+    final compiler = ConsoleCompiler(
       logger: logger,
       entryPoint: p.join(Directory.current.path, 'lib', 'main.dart'),
       outputDirectory: netlifyEdge.path,

@@ -1,11 +1,9 @@
 import 'dart:async';
 import 'dart:io';
-import 'dart:isolate';
 
 import 'package:edge/src/config.dart';
 import 'package:mason_logger/mason_logger.dart';
 import 'package:path/path.dart' as p;
-import 'package:pool/pool.dart';
 
 import '../../compiler.dart';
 import '../../watcher.dart';
@@ -63,7 +61,7 @@ class SupabaseBuildCommand extends BaseCommand {
       watchPath: p.join(Directory.current.path, 'lib'),
     );
 
-    final compilers = <Compiler>[];
+    final compilers = <ConsoleCompiler>[];
     final futures = <Future>[];
     final progress = logger.progress(
         'Compiling ' + cfg.supabase.functions.length.toString() + ' functions');
@@ -77,15 +75,13 @@ class SupabaseBuildCommand extends BaseCommand {
         await entryFile.parent.create(recursive: true);
       }
 
-      final compiler = Compiler(
+      final compiler = ConsoleCompiler(
         logger: logger,
         entryPoint: p.join(Directory.current.path, fn.value),
         outputDirectory: fnDir,
         outputFileName: 'main.dart.js',
         level: devCompilerLevel,
         fileName: fn.value,
-        showProgress: false,
-        exitOnError: exitOnError,
       );
 
       futures.add(compiler.compile());
@@ -114,88 +110,44 @@ class SupabaseBuildCommand extends BaseCommand {
   Future<void> runBuild() async {
     final cfg = await getConfig();
 
-    final numberOfProcessors = getProperty((cfg) => cfg.isolatePoolSize) ??
-        Platform.numberOfProcessors;
+    final numberOfProcessors = getProperty((cfg) => cfg.isolates);
 
-    final pool = Pool(numberOfProcessors);
-    final functionsToCompile = cfg.supabase.functions.keys.toList();
-
-    final useIsolates = getProperty((c) => c.useIsolates) ?? true;
     final level = getProperty((c) => c.prodCompilerLevel) ?? CompilerLevel.O1;
 
-    if (useIsolates) {
-      logger.detail('Using isolates with pool size $numberOfProcessors');
-    }
-    final progress =
-        logger.progress('Compiling ${functionsToCompile.length} functions');
+    logger.detail('Using isolates with pool size $numberOfProcessors');
 
     final contents = edgeFunctionEntryFileDefaultValue('main.dart.js');
+    final additionalArgs = getProperty((c) => c.additionalCompilerArgs) ?? [];
 
-    final compilations = <Future<FunctionCompilationResult>>[];
-    final ioFutures = <Future>[];
-    for (final fn in cfg.supabase.functions.entries) {
-      final fnDir = p.join(cfg.supabase.projectPath, 'functions', fn.key);
-      final entryFile = File(p.join(fnDir, 'index.ts'));
-
-      final compiler = Compiler(
-        logger: logger,
-        entryPoint: p.join(Directory.current.path, fn.value),
-        outputDirectory: fnDir,
-        outputFileName: 'main.dart.js',
-        level: level,
-        fileName: fn.value,
-        showProgress: false,
-        throwOnError: true,
-      );
-
-      compilations.add(pool.withResource(() async {
-        try {
-          if (useIsolates) {
-            await Isolate.run(() => compiler.compile());
-          } else {
-            await compiler.compile();
-          }
-          return FunctionCompilationSuccess(fn.key);
-        } on CompilerException catch (e) {
-          return FunctionCompilationFailure(fn.key, e);
-        }
-      }));
-
-      ioFutures.add(Future(() async {
+    final multiCompiler = MultiCompiler(
+      compilerFactory: (entryPoint) {
+        return InternalCompiler(
+          entryPoint: entryPoint,
+          outputDirectory:
+              p.join(cfg.supabase.projectPath, 'functions', entryPoint.name),
+          outputFileName: 'main.dart.js',
+          level: level,
+          fileName: entryPoint.name,
+          additionalArgs: additionalArgs,
+        );
+      },
+      setup: (entryPoint) async {
+        final entryFile = File(p.join(
+          cfg.supabase.projectPath,
+          'functions',
+          entryPoint.name,
+          'index.ts',
+        ));
         if (!entryFile.parent.existsSync()) {
           await entryFile.parent.create(recursive: true);
         }
         await entryFile.writeAsString(contents);
-      }));
-    }
+      },
+      logger: logger,
+      isolateCount: numberOfProcessors,
+    );
 
-    const _clearLine = '\x1b[2K\r';
-    int failures = 0;
-    await for (final res in Stream.fromFutures(compilations)) {
-      // clear the current line
-      functionsToCompile.remove(res.function);
-      final header = switch (res) {
-        FunctionCompilationSuccess _ => lightGreen.wrap('✓'),
-        FunctionCompilationFailure _ => red.wrap('✗'),
-      };
-      logger.info('$_clearLine${header} ${res.function}');
-      if (res case FunctionCompilationFailure(:final exception)) {
-        failures++;
-        logger.err(exception.stdout);
-      }
-      progress.update('Compiling ${functionsToCompile.length} functions');
-    }
-
-    await Future.wait(ioFutures);
-
-    stdout.write('$_clearLine\n');
-    if (failures > 0) {
-      progress.fail('Failed to compile $failures functions');
-      exit(1);
-    } else {
-      progress
-          .complete('All ${cfg.supabase.functions.length} functions compiled');
-    }
+    await multiCompiler.compile(EntryPoint.fromMap(cfg.supabase.functions));
   }
 
   @override
@@ -211,22 +163,6 @@ class SupabaseBuildCommand extends BaseCommand {
       await runBuild();
     }
   }
-}
-
-sealed class FunctionCompilationResult {
-  final String function;
-
-  FunctionCompilationResult(this.function);
-}
-
-class FunctionCompilationSuccess extends FunctionCompilationResult {
-  FunctionCompilationSuccess(super.function);
-}
-
-class FunctionCompilationFailure extends FunctionCompilationResult {
-  final CompilerException exception;
-
-  FunctionCompilationFailure(super.function, this.exception);
 }
 
 final edgeFunctionEntryFileDefaultValue = (String fileName) => '''
