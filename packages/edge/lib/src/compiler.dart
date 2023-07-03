@@ -202,18 +202,17 @@ class MultiCompiler {
     required this.logger,
     this.isolateCount,
     this.exitOnError = true,
-  }) {
-    assert(isolateCount == null || isolateCount! >= 0);
-  }
+  });
 
   Future<void> compile(List<EntryPoint> entryPoints) async {
     const _clearLine = '\x1b[2K\r';
 
     final poolSize = switch (isolateCount) {
-      final c? when c > 0 => c,
       0 || null => Platform.numberOfProcessors,
-      _ => 1,
+      final c when c > 0 => c,
+      _ => logger.fatal('Invalid isolate count: $isolateCount')
     };
+
     final pool = Pool(poolSize);
 
     final _toCompile = List.of(entryPoints);

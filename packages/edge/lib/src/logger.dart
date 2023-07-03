@@ -1,9 +1,19 @@
-import 'package:mason_logger/mason_logger.dart';
+import 'dart:io';
+
 import 'package:ansi_styles/ansi_styles.dart';
+import 'package:mason_logger/mason_logger.dart';
 
 extension LoggerExtension on Logger {
   /// Writes an empty line to the console.
   void lineBreak() => write('\n');
+
+  Never fatal(String message, {StackTrace? stackTrace, int exitCode = 1}) {
+    err(message);
+    if (stackTrace != null) {
+      err(stackTrace.toString());
+    }
+    exit(1);
+  }
 }
 
 extension StringExtension on String {
