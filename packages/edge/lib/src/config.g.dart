@@ -41,11 +41,10 @@ _$_SupabaseConfig _$$_SupabaseConfigFromJson(Map<String, dynamic> json) =>
               $checkedConvert('project_path', (v) => v as String? ?? '.'),
           functions: $checkedConvert(
               'functions',
-              (v) =>
-                  (v as Map<String, dynamic>?)?.map(
-                    (k, e) => MapEntry(k, e as String),
-                  ) ??
-                  const <String, String>{'dart_edge': 'lib/main.dart'}),
+              (v) => v == null
+                  ? const [EntryPoint('lib/main.dart', name: 'dart_edge')]
+                  : const EntryPointsConverter()
+                      .fromJson(v as Map<String, String>)),
           devCompilerLevel: $checkedConvert('dev_compiler_level',
               (v) => $enumDecodeNullable(_$CompilerLevelEnumMap, v)),
           prodCompilerLevel: $checkedConvert('prod_compiler_level',
@@ -70,7 +69,7 @@ _$_SupabaseConfig _$$_SupabaseConfigFromJson(Map<String, dynamic> json) =>
 Map<String, dynamic> _$$_SupabaseConfigToJson(_$_SupabaseConfig instance) =>
     <String, dynamic>{
       'project_path': instance.projectPath,
-      'functions': instance.functions,
+      'functions': const EntryPointsConverter().toJson(instance.functions),
       'dev_compiler_level': _$CompilerLevelEnumMap[instance.devCompilerLevel],
       'prod_compiler_level': _$CompilerLevelEnumMap[instance.prodCompilerLevel],
       'exit_watch_on_failure': instance.exitWatchOnFailure,

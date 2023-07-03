@@ -57,7 +57,8 @@ abstract class Compiler {
       '-${level.name}',
       '-o',
       (p.join(outputDirectory, outputFileName)),
-      ...additionalArgs ?? ['--server-mode'],
+      '--server-mode',
+      ...?additionalArgs,
       entryPoint.path,
     ]);
 
@@ -195,6 +196,7 @@ class MultiCompiler {
   final Logger logger;
   final int? isolateCount;
   final bool exitOnError;
+  final bool minimal;
 
   MultiCompiler({
     required this.compilerFactory,
@@ -202,6 +204,7 @@ class MultiCompiler {
     required this.logger,
     this.isolateCount,
     this.exitOnError = true,
+    this.minimal = false,
   });
 
   Future<void> compile(List<EntryPoint> entryPoints) async {
@@ -258,8 +261,10 @@ class MultiCompiler {
       };
       switch (res) {
         case FunctionCompilationSuccess():
-          logger.info(
-              '$_clearLine${header} Compiled ${styleBold.wrap(res.function)}');
+          if (!minimal) {
+            logger.info(
+                '$_clearLine${header} Compiled ${styleBold.wrap(res.function)}');
+          }
         case FunctionCompilationFailure(:final exception):
           failures++;
           logger.err(

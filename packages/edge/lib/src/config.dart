@@ -53,8 +53,9 @@ class Config with _$Config {
 class SupabaseConfig with BaseConfig, _$SupabaseConfig {
   const factory SupabaseConfig({
     @Default('.') String projectPath,
-    @Default(<String, String>{'dart_edge': 'lib/main.dart'})
-    Map<String, String> functions,
+    @Default([EntryPoint('lib/main.dart', name: 'dart_edge')])
+    @EntryPointsConverter()
+    List<EntryPoint> functions,
     CompilerLevel? devCompilerLevel,
     CompilerLevel? prodCompilerLevel,
     bool? exitWatchOnFailure,
@@ -94,5 +95,20 @@ extension on YamlNode {
       ];
     }
     return value;
+  }
+}
+
+class EntryPointsConverter
+    implements JsonConverter<List<EntryPoint>, Map<String, String>> {
+  const EntryPointsConverter();
+
+  @override
+  List<EntryPoint> fromJson(Map<String, String> json) {
+    return json.entries.map((e) => EntryPoint(e.value, name: e.key)).toList();
+  }
+
+  @override
+  Map<String, String> toJson(List<EntryPoint> object) {
+    return {for (final e in object) e.name: e.path};
   }
 }

@@ -199,7 +199,8 @@ SupabaseConfig _$SupabaseConfigFromJson(Map<String, dynamic> json) {
 /// @nodoc
 mixin _$SupabaseConfig {
   String get projectPath => throw _privateConstructorUsedError;
-  Map<String, String> get functions => throw _privateConstructorUsedError;
+  @EntryPointsConverter()
+  List<EntryPoint> get functions => throw _privateConstructorUsedError;
   CompilerLevel? get devCompilerLevel => throw _privateConstructorUsedError;
   CompilerLevel? get prodCompilerLevel => throw _privateConstructorUsedError;
   bool? get exitWatchOnFailure => throw _privateConstructorUsedError;
@@ -221,7 +222,7 @@ abstract class $SupabaseConfigCopyWith<$Res> {
   @useResult
   $Res call(
       {String projectPath,
-      Map<String, String> functions,
+      @EntryPointsConverter() List<EntryPoint> functions,
       CompilerLevel? devCompilerLevel,
       CompilerLevel? prodCompilerLevel,
       bool? exitWatchOnFailure,
@@ -258,7 +259,7 @@ class _$SupabaseConfigCopyWithImpl<$Res, $Val extends SupabaseConfig>
       functions: null == functions
           ? _value.functions
           : functions // ignore: cast_nullable_to_non_nullable
-              as Map<String, String>,
+              as List<EntryPoint>,
       devCompilerLevel: freezed == devCompilerLevel
           ? _value.devCompilerLevel
           : devCompilerLevel // ignore: cast_nullable_to_non_nullable
@@ -293,7 +294,7 @@ abstract class _$$_SupabaseConfigCopyWith<$Res>
   @useResult
   $Res call(
       {String projectPath,
-      Map<String, String> functions,
+      @EntryPointsConverter() List<EntryPoint> functions,
       CompilerLevel? devCompilerLevel,
       CompilerLevel? prodCompilerLevel,
       bool? exitWatchOnFailure,
@@ -328,7 +329,7 @@ class __$$_SupabaseConfigCopyWithImpl<$Res>
       functions: null == functions
           ? _value._functions
           : functions // ignore: cast_nullable_to_non_nullable
-              as Map<String, String>,
+              as List<EntryPoint>,
       devCompilerLevel: freezed == devCompilerLevel
           ? _value.devCompilerLevel
           : devCompilerLevel // ignore: cast_nullable_to_non_nullable
@@ -358,9 +359,9 @@ class __$$_SupabaseConfigCopyWithImpl<$Res>
 class _$_SupabaseConfig implements _SupabaseConfig {
   const _$_SupabaseConfig(
       {this.projectPath = '.',
-      final Map<String, String> functions = const <String, String>{
-        'dart_edge': 'lib/main.dart'
-      },
+      @EntryPointsConverter() final List<EntryPoint> functions = const [
+        EntryPoint('lib/main.dart', name: 'dart_edge')
+      ],
       this.devCompilerLevel,
       this.prodCompilerLevel,
       this.exitWatchOnFailure,
@@ -375,13 +376,14 @@ class _$_SupabaseConfig implements _SupabaseConfig {
   @override
   @JsonKey()
   final String projectPath;
-  final Map<String, String> _functions;
+  final List<EntryPoint> _functions;
   @override
   @JsonKey()
-  Map<String, String> get functions {
-    if (_functions is EqualUnmodifiableMapView) return _functions;
+  @EntryPointsConverter()
+  List<EntryPoint> get functions {
+    if (_functions is EqualUnmodifiableListView) return _functions;
     // ignore: implicit_dynamic_type
-    return EqualUnmodifiableMapView(_functions);
+    return EqualUnmodifiableListView(_functions);
   }
 
   @override
@@ -459,7 +461,7 @@ class _$_SupabaseConfig implements _SupabaseConfig {
 abstract class _SupabaseConfig implements SupabaseConfig {
   const factory _SupabaseConfig(
       {final String projectPath,
-      final Map<String, String> functions,
+      @EntryPointsConverter() final List<EntryPoint> functions,
       final CompilerLevel? devCompilerLevel,
       final CompilerLevel? prodCompilerLevel,
       final bool? exitWatchOnFailure,
@@ -472,7 +474,8 @@ abstract class _SupabaseConfig implements SupabaseConfig {
   @override
   String get projectPath;
   @override
-  Map<String, String> get functions;
+  @EntryPointsConverter()
+  List<EntryPoint> get functions;
   @override
   CompilerLevel? get devCompilerLevel;
   @override

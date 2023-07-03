@@ -49,76 +49,28 @@ class SupabaseBuildCommand extends BaseCommand {
 
   BaseConfig get subConfig => config.supabase;
 
-  Future<void> runDev() async {
-    final cfg = await getConfig();
-
-    final exitOnError = getProperty((c) => c.exitWatchOnFailure) ?? true;
-    logger.detail("Watcher will ${exitOnError ? '' : 'not '}exit on error.");
-
-    final watcher = Watcher(
-      include: '**/*.dart',
-      debounce: 500,
-      watchPath: p.join(Directory.current.path, 'lib'),
-    );
-
-    final compilers = <ConsoleCompiler>[];
-    final futures = <Future>[];
-    final progress = logger.progress(
-        'Compiling ' + cfg.supabase.functions.length.toString() + ' functions');
-    final devCompilerLevel =
-        getProperty((c) => c.devCompilerLevel) ?? CompilerLevel.O1;
-
-    for (final fn in cfg.supabase.functions.entries) {
-      final fnDir = p.join(cfg.supabase.projectPath, 'functions', fn.key);
-      final entryFile = File(p.join(fnDir, 'index.ts'));
-      if (!entryFile.parent.existsSync()) {
-        await entryFile.parent.create(recursive: true);
-      }
-
-      final compiler = ConsoleCompiler(
-        logger: logger,
-        entryPoint: p.join(Directory.current.path, fn.value),
-        outputDirectory: fnDir,
-        outputFileName: 'main.dart.js',
-        level: devCompilerLevel,
-        fileName: fn.value,
-      );
-
-      futures.add(compiler.compile());
-
-      futures.add(entryFile.writeAsString(
-        edgeFunctionEntryFileDefaultValue('main.dart.js'),
-      ));
-
-      compilers.add(compiler);
-    }
-    await Future.wait(futures);
-
-    progress.complete();
-
-    watcher.watch().listen((event) async {
-      final progress = logger.progress(
-        'Compiling ' + cfg.supabase.functions.length.toString() + ' functions',
-      );
-      await Future.wait(
-        compilers.map((compiler) => compiler.compile()),
-      );
-      progress.complete();
-    });
-  }
-
   Future<void> runBuild() async {
     final cfg = await getConfig();
 
-    final numberOfProcessors = getProperty((cfg) => cfg.isolates);
+    final multiCompiler = _getMultiCompiler(cfg);
 
-    final level = getProperty((c) => c.prodCompilerLevel) ?? CompilerLevel.O1;
+    await multiCompiler.compile(cfg.supabase.functions);
+  }
 
-    logger.detail('Using isolates with pool size $numberOfProcessors');
+  MultiCompiler _getMultiCompiler(
+    Config cfg, {
+    bool isDev = false,
+    bool exitOnError = true,
+  }) {
+    final additionalArgs = getProperty((c) => c.additionalCompilerArgs);
+    final isolateCount = getProperty((cfg) => cfg.isolates);
+    final level =
+        getProperty((c) => isDev ? c.devCompilerLevel : c.prodCompilerLevel) ??
+            CompilerLevel.O1;
+
+    logger.detail('Using isolates with pool size $isolateCount');
 
     final contents = edgeFunctionEntryFileDefaultValue('main.dart.js');
-    final additionalArgs = getProperty((c) => c.additionalCompilerArgs) ?? [];
-
     final multiCompiler = MultiCompiler(
       compilerFactory: (entryPoint) {
         return InternalCompiler(
@@ -144,10 +96,34 @@ class SupabaseBuildCommand extends BaseCommand {
         await entryFile.writeAsString(contents);
       },
       logger: logger,
-      isolateCount: numberOfProcessors,
+      isolateCount: isolateCount,
+      exitOnError: exitOnError,
+      minimal: isDev,
+    );
+    return multiCompiler;
+  }
+
+  Future<void> runDev() async {
+    final cfg = await getConfig();
+
+    final exitOnError = getProperty((c) => c.exitWatchOnFailure) ?? true;
+    logger.detail("Watcher will ${exitOnError ? '' : 'not '}exit on error.");
+
+    final watcher = Watcher(
+      include: '**/*.dart',
+      debounce: 500,
+      watchPath: p.join(Directory.current.path, 'lib'),
     );
 
-    await multiCompiler.compile(EntryPoint.fromMap(cfg.supabase.functions));
+    final compiler = _getMultiCompiler(
+      cfg,
+      isDev: true,
+      exitOnError: exitOnError,
+    );
+
+    watcher.watch().listen((event) async {
+      await compiler.compile(cfg.supabase.functions);
+    });
   }
 
   @override
