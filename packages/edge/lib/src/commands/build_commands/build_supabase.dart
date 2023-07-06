@@ -70,7 +70,7 @@ class SupabaseBuildCommand extends BaseCommand {
 
     logger.detail('Using isolates with pool size $isolateCount');
 
-    final contents = edgeFunctionEntryFileDefaultValue('main.dart.js');
+    final contents = _edgeFunctionEntryFileDefaultValue('main.dart.js');
     final multiCompiler = MultiCompiler(
       compilerFactory: (entryPoint) {
         return InternalCompiler(
@@ -143,7 +143,7 @@ class SupabaseBuildCommand extends BaseCommand {
   }
 }
 
-final edgeFunctionEntryFileDefaultValue = (String fileName) => '''
+String _edgeFunctionEntryFileDefaultValue(String fileName) => '''
 import { serve } from "https://deno.land/std@0.131.0/http/server.ts";
 import "./${fileName}";
 
@@ -152,7 +152,10 @@ serve((request) => {
     return self.__dartSupabaseFetchHandler(request);
   }
 
-  return new Response("Something went wrong", { status: 500 });
+  return new Response(
+    "Something went wrong, unable to find the Dart handler.",
+    { status: 500 },
+  );
 });
 
 declare global {
