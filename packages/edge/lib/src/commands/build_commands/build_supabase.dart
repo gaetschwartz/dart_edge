@@ -29,6 +29,11 @@ class SupabaseBuildCommand extends BaseCommand {
       abbr: 'p',
       help: 'The path to the supabase project.',
     );
+    argParser.addOption(
+      'isolates',
+      abbr: 'i',
+      help: 'The number of isolates to use for compilation.',
+    );
     argParser.addFlag('verbose', abbr: 'v', help: 'Enables verbose logging.');
   }
 
@@ -39,6 +44,9 @@ class SupabaseBuildCommand extends BaseCommand {
         projectPath: p.canonicalize(argResults!.wasParsed('project-path')
             ? argResults!['project-path'] as String
             : cfg.supabase.projectPath),
+        isolates: argResults!.wasParsed('isolates')
+            ? int.parse(argResults!['isolates'] as String)
+            : cfg.supabase.isolates,
       ),
     );
 
