@@ -1,3 +1,6 @@
+> [!WARNING]
+> This repository is no longer maintained and is left archived for educational purposes. Whilst an interesing project, there were too many issues around DX and stability (testing, compilation times etc) to take it any further.
+
 <h1 align="center">Dart Edge (Experimental)</h1>
 <p align="center">Run Dart on the Edge - supporting Vercel, Cloudflare Workers & Supabase Edge Functions (more coming soon).</p>
 
